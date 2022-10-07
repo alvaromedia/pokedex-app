@@ -1,0 +1,35 @@
+body {
+  margin: 0;
+  box-sizing: border-box;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.navbar {
+  background-color: rgb(0, 38, 229);
+  padding: 20px 30px;
+}
+
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.pokemon-list {
+  display: grid;
+  gap: 10px;
+  justify-content: center;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+li {
+  list-style: none;
+}
+
+.pokemon-button {
+  font-size: 16px;
+  width: 100%;
+  margin: 10px;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+}
