@@ -23,7 +23,20 @@ const pokemonRepository = (function () {
   }
 
   // Fetch a single pokemon's details
-  function fetchPokemonDetails() {}
+  function fetchPokemonDetails(pokemonName) {
+    return fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`)
+      .then((res) => res.json())
+      .then((data) => {
+        let selectedPokemon = {
+          name: data.name,
+          imageUrl: data.sprites.front_default,
+          height: data.height,
+          types: data.types,
+        };
+
+        return selectedPokemon;
+      });
+  }
 
   // Get the whole pokemon array
   function getAllPokemon() {
@@ -57,11 +70,53 @@ const pokemonRepository = (function () {
     showDetails(pokemonButton, pokemonObj.name);
   }
 
-  // On a click event in a button, log the pokemon name to the console
+  // On a click event in a button, fetch details from a specific pokemon
   function showDetails(button, pokemonName) {
     button.addEventListener('click', () => {
-      console.log(pokemonName);
+      fetchPokemonDetails(pokemonName).then(displayModal);
     });
+  }
+
+  // Modal functionality
+  function displayModal(fetchedPokemon) {
+    const modalContainer = document.querySelector('.modal-container');
+    const modal = document.createElement('div');
+
+    // Clear modal container
+    modalContainer.innerHTML = '';
+    modalContainer.classList.add('is-visible');
+
+    // Add class to the modal
+    modal.classList.add('modal');
+
+    // Create button to close the modal
+    const closeBtn = document.createElement('button');
+    closeBtn.classList.add('btn-close');
+    closeBtn.innerText = 'Close';
+
+    closeBtn.addEventListener('click', () => {
+      modalContainer.classList.remove('is-visible');
+    });
+
+    const pokemonImage = document.createElement('img');
+    pokemonImage.src = fetchedPokemon.imageUrl;
+
+    const pokemonName = document.createElement('h1');
+    pokemonName.innerText = fetchedPokemon.name;
+
+    const pokemonHeight = document.createElement('p');
+    pokemonHeight.innerText = `Height: ${fetchedPokemon.height}`;
+
+    const pokemonTypes = document.createElement('p');
+
+    pokemonTypes.innerText = `Main type: ${fetchedPokemon.types[0].type.name} `;
+
+    modal.appendChild(closeBtn);
+    modal.appendChild(pokemonImage);
+    modal.appendChild(pokemonName);
+    modal.appendChild(pokemonHeight);
+    modal.appendChild(pokemonTypes);
+    modalContainer.appendChild(modal);
   }
 
   // Returned value from the IIFE
