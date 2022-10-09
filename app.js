@@ -50,12 +50,27 @@ const pokemonRepository = (function () {
   }
 
   // Filter pokemon by name
-  function filterPokemon(pokemonName) {
-    return pokemonArray.filter((pokemonObj) => pokemonObj.name === pokemonName);
+  function filterPokemon(searchText) {
+    return pokemonArray.filter((pokemonObj) =>
+      pokemonObj.name.includes(searchText.toLowerCase())
+    );
+  }
+
+  // When searching for a pokemon, empty the pokemon-list and insert new content in the pokemonArray
+  function searchPokemon() {
+    const searchBar = document.getElementById('search-bar');
+
+    searchBar.addEventListener('keyup', () => {
+      const pokemonList = document.querySelector('.pokemon-list');
+      pokemonList.innerHTML = '';
+
+      let filteredPokemon = filterPokemon(searchBar.value);
+      filteredPokemon.forEach(createPokemonElement);
+    });
   }
 
   // With a given pokemon, create a button/list-item and insert it into the DOM
-  function addListItem(pokemonObj) {
+  function createPokemonElement(pokemonObj) {
     const pokemonList = document.querySelector('.pokemon-list');
     const pokemonListItem = document.createElement('li');
     const pokemonButton = document.createElement('button');
@@ -94,8 +109,24 @@ const pokemonRepository = (function () {
     closeBtn.classList.add('btn-close');
     closeBtn.innerText = 'Close';
 
-    closeBtn.addEventListener('click', () => {
+    function hideModal() {
       modalContainer.classList.remove('is-visible');
+    }
+
+    closeBtn.addEventListener('click', () => {
+      hideModal();
+    });
+
+    modalContainer.addEventListener('click', (e) => {
+      if (e.target === modalContainer) {
+        hideModal();
+      }
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        hideModal();
+      }
     });
 
     const pokemonImage = document.createElement('img');
@@ -123,14 +154,14 @@ const pokemonRepository = (function () {
   return {
     fetchPokemon,
     getAllPokemon,
-    addPokemon,
-    filterPokemon,
-    addListItem,
+    createPokemonElement,
+    searchPokemon,
   };
 })();
 
 pokemonRepository.fetchPokemon().then(() => {
   pokemonRepository.getAllPokemon().forEach((pokemonObj) => {
-    pokemonRepository.addListItem(pokemonObj);
+    pokemonRepository.createPokemonElement(pokemonObj);
+    pokemonRepository.searchPokemon();
   });
 });
